@@ -704,7 +704,7 @@
             let dateStr = "";
             if(item.date) {
                 const [y, m, d] = item.date.split('-');
-                dateStr = `${d}/${m}/${y}`;
+                dateStr = `${m}/${d}/${y}`;
             }
 
             const color = colors[item.subject] || '#eee';
@@ -764,7 +764,7 @@
 
         const sortedForPdf = [...lessons].sort((a,b) => new Date(b.date) - new Date(a.date));
         const tableData = sortedForPdf.map(a => {
-            let dStr = ""; if(a.date) { const [y, m, d] = a.date.split('-'); dStr = `${d}/${m}/${y}`; }
+            let dStr = ""; if(a.date) { const [y, m, d] = a.date.split('-'); dStr = `${m}/${d}/${y}`; }
             let attachText = (a.fileLink || a.fileData) ? "Yes" : "No";
             let completedText = (a.completedFileLink || a.completedFileData) ? "Yes" : "No";
             return [dStr, a.subject, a.topic || '-', a.name, attachText, completedText, a.status];
@@ -793,3 +793,4 @@
 
 </body>
 </html>
+
