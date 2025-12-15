@@ -823,7 +823,12 @@
         const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         doc.text(`Report Generated: ${dateStr}`, 14, 26);
 
-        const sortedForPdf = [...lessons].sort((a,b) => new Date(b.startDate || b.date) - new Date(a.startDate || a.date));
+        // Sort by Subject, then Date
+        const sortedForPdf = [...lessons].sort((a,b) => {
+            if (a.subject < b.subject) return -1;
+            if (a.subject > b.subject) return 1;
+            return new Date(b.startDate || b.date) - new Date(a.startDate || a.date);
+        });
         
         const tableData = sortedForPdf.map(a => {
             let start = formatDateDisplay(a.startDate || a.date);
@@ -832,7 +837,9 @@
             if(end && end !== start) dStr += ` - \n${end}`;
 
             let attachText = (a.fileLink || a.fileData) ? "Yes" : "No";
-            let completedText = (a.completedFileLink || a.completedFileData) ? "Yes" : "No";
+            
+            // "Done" now reflects STATUS, not attachment
+            let completedText = (a.status === 'Completed') ? "Yes" : "No";
 
             let nameField = a.name;
             if(a.note) nameField += `\n(Note: ${a.note})`;
