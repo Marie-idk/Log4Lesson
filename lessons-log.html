@@ -391,6 +391,23 @@
     </div>
 </div>
 
+<!-- DELETE CONFIRMATION MODAL (NEW) -->
+<div id="delete-modal" class="modal">
+    <div class="modal-card" style="max-width: 320px; text-align: center; padding: 25px;">
+        <div style="width: 50px; height: 50px; background: #fff0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+            <i class="fas fa-trash-alt" style="color: #FF2E63; font-size: 1.5rem;"></i>
+        </div>
+        <h3 style="margin: 0 0 10px; font-family: 'Fredoka', sans-serif; color: #333;">Delete Lesson?</h3>
+        <p style="color: #666; margin-bottom: 25px; font-size: 0.95rem; line-height: 1.4;">
+            Are you sure you want to delete this lesson? This action cannot be undone.
+        </p>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-submit" onclick="window.closeDeleteModal()" style="background: #f5f5f5; color: #555; font-weight: 700;">Cancel</button>
+            <button class="btn-submit" onclick="window.confirmDelete()" style="background: #FF2E63; color: white; font-weight: 700; box-shadow: 0 4px 10px rgba(255, 46, 99, 0.3);">Delete</button>
+        </div>
+    </div>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -417,6 +434,7 @@
     let currentFilter = 'All';
     let currentMonthFilter = 'All';
     let isLogVisible = true;
+    let deleteTargetId = null; // Store ID for deletion
 
     const subjectIcons = {
         'Math': 'fa-calculator',
@@ -582,11 +600,31 @@
         }
     };
 
-    // Attach to window explicity for safety
-    window.deleteEntry = async function(id) {
-        if(confirm('Delete this lesson plan?')) {
-            try { await deleteDoc(doc(db, COLLECTION_NAME, id)); } 
-            catch (e) { console.error("Delete failed", e); }
+    // --- NEW DELETE LOGIC USING MODAL ---
+    window.deleteEntry = function(id) {
+        deleteTargetId = id; // Store ID
+        document.getElementById('delete-modal').classList.add('active'); // Show custom modal
+    };
+
+    window.closeDeleteModal = function() {
+        deleteTargetId = null;
+        document.getElementById('delete-modal').classList.remove('active');
+    };
+
+    window.confirmDelete = async function() {
+        if(!deleteTargetId) return;
+        const btn = document.querySelector('#delete-modal .btn-submit:last-child');
+        const originalText = btn.innerText;
+        btn.innerText = "Deleting...";
+        
+        try {
+            await deleteDoc(doc(db, COLLECTION_NAME, deleteTargetId));
+            window.closeDeleteModal();
+        } catch (e) { 
+            console.error("Delete failed", e); 
+            alert("Delete failed: " + e.message);
+        } finally {
+            btn.innerText = originalText;
         }
     };
 
