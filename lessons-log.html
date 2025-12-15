@@ -92,9 +92,9 @@
         /* Unit/Topic Group Container */
         .unit-group { margin-bottom: 15px; background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         
-        /* Unit Header (The clickable bar) */
+        /* Unit Header */
         .unit-header { 
-            padding: 15px 20px; 
+            padding: 12px 15px; 
             background: #fafafa; 
             cursor: pointer; 
             display: flex; 
@@ -107,78 +107,79 @@
         .unit-group.expanded .unit-header { border-bottom: 1px solid #eee; background: white; }
         .unit-group.expanded { border-color: #ccc; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
 
-        .unit-info { display: flex; align-items: center; gap: 15px; }
-        .unit-icon { width: 40px; height: 40px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: white; }
+        .unit-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .unit-icon { width: 36px; height: 36px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: white; flex-shrink: 0; }
         
-        .unit-title-block { display: flex; flex-direction: column; }
-        .unit-title { font-weight: 800; font-size: 1.05rem; color: var(--text-main); font-family: 'Fredoka', sans-serif; }
-        .unit-meta { font-size: 0.8rem; color: #888; margin-top: 2px; display: flex; gap: 10px; align-items: center; }
-        .unit-badge { background: #eee; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; }
+        .unit-title-block { display: flex; flex-direction: column; min-width: 0; }
+        .unit-title { font-weight: 800; font-size: 1rem; color: var(--text-main); font-family: 'Fredoka', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .unit-meta { font-size: 0.75rem; color: #888; margin-top: 2px; display: flex; gap: 8px; align-items: center; }
+        .unit-badge { background: #eee; padding: 1px 6px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
 
-        .unit-actions { display: flex; align-items: center; gap: 10px; }
+        .unit-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         
-        /* Button to add lesson specifically to this unit */
         .btn-add-unit { 
             background: white; border: 2px solid #ddd; color: #666; 
-            padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 5px; transition: 0.2s;
+            padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 4px; transition: 0.2s;
         }
         .btn-add-unit:hover { border-color: var(--english-color); color: var(--english-color); background: #f0fbff; }
         
-        .toggle-icon { color: #ccc; transition: transform 0.3s; font-size: 1.1rem; }
+        .toggle-icon { color: #ccc; transition: transform 0.3s; font-size: 1rem; }
         .unit-group.expanded .toggle-icon { transform: rotate(180deg); color: var(--text-main); }
 
-        /* The List of Lessons inside the Unit */
+        /* The List of Lessons */
         .unit-body { display: none; background: white; }
         .unit-group.expanded .unit-body { display: block; animation: slideDown 0.3s ease-out; }
         
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Reuse grid row but tweaked for nesting */
+        /* GRID ROW LAYOUT - Optimized for Date Range Width */
         .grid-row {
             display: grid;
-            /* Date | Name/Subtopic | Status | Actions */
-            grid-template-columns: 120px 1fr 120px 120px; 
-            padding: 12px 20px;
+            /* Date (Wider) | Name | Status | Actions */
+            grid-template-columns: 130px 1fr 100px 80px; 
+            gap: 10px;
+            padding: 12px 15px;
             align-items: center;
             border-bottom: 1px solid #f8f8f8;
         }
         .grid-row:last-child { border-bottom: none; }
         
-        /* Header inside the unit */
         .inner-header { 
             font-size: 0.75rem; color: #999; font-weight: 800; text-transform: uppercase; 
-            background: #fdfdfd; padding: 8px 20px; border-bottom: 1px solid #f0f0f0;
+            background: #fdfdfd; padding: 8px 15px; border-bottom: 1px solid #f0f0f0;
         }
 
-        .lesson-name-block { display: flex; flex-direction: column; }
-        .lesson-name { font-weight: 700; color: #333; font-size: 0.95rem; }
-        .lesson-subtopic { color: #00C2FF; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
-        .lesson-note { color: #888; font-size: 0.85rem; font-style: italic; margin-top: 4px; display: flex; align-items: start; gap: 6px; }
+        .lesson-name-block { display: flex; flex-direction: column; min-width: 0; }
+        .lesson-name { font-weight: 700; color: #333; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lesson-subtopic { color: #00C2FF; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lesson-note { color: #888; font-size: 0.8rem; font-style: italic; margin-top: 2px; display: flex; align-items: start; gap: 4px; line-height: 1.2; white-space: pre-wrap; }
         
-        /* Badges & Icons */
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; cursor: pointer; text-align: center; border: 1px solid transparent; width: 100px; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; cursor: pointer; text-align: center; border: 1px solid transparent; width: 100%; white-space: nowrap; }
         .status-assigned { background: #fff0f0; color: #FF2E63; border-color: #ffcdd2; }
         .status-received { background: #e8f5e9; color: #00b894; border-color: #b9f6ca; }
 
-        .file-icon-btn { color: #555; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #f0f0f0; margin-right: 5px; }
-        .file-icon-btn:hover { background: #e0e0e0; color: #00C2FF; }
-        .completed-icon { color: #00b894; background: #e8f5e9; }
-        .completed-icon:hover { background: #b9f6ca; color: #008f72; }
-        .delete-btn { color: #ff6b6b; font-size: 1rem; cursor: pointer; margin-left: 5px; opacity: 0.6; }
-        .delete-btn:hover { opacity: 1; transform: scale(1.1); }
+        /* Action Buttons */
+        .action-container { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+        .btn-icon { background: none; border: none; cursor: pointer; padding: 5px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; font-size: 1rem; color: #555; width: 28px; height: 28px; }
+        .btn-icon:hover { background: #f0f0f0; }
+        .btn-icon.link-btn:hover { color: #00C2FF; }
+        .btn-icon.done-btn { color: #00b894; background: #e8f5e9; }
+        .btn-icon.done-btn:hover { background: #b9f6ca; color: #008f72; }
+        .btn-icon.delete-btn { color: #ff6b6b; opacity: 0.7; }
+        .btn-icon.delete-btn:hover { opacity: 1; background: #fff0f0; transform: scale(1.1); }
 
         /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 1000; align-items: center; justify-content: center; }
         .modal.active { display: flex; }
-        .modal-card { background: white; width: 90%; max-width: 500px; border-radius: var(--radius); padding: 30px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
-        .close-modal { position: absolute; top: 20px; right: 20px; border: none; background: none; font-size: 1.5rem; cursor: pointer; color: #999; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.95rem; color: var(--text-main); }
-        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 1rem; background: #fafafa; }
+        .modal-card { background: white; width: 90%; max-width: 500px; border-radius: var(--radius); padding: 25px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 15px; right: 15px; border: none; background: none; font-size: 1.5rem; cursor: pointer; color: #999; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.9rem; color: var(--text-main); }
+        input, select, textarea { width: 100%; padding: 10px; border: 2px solid #eee; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 0.95rem; background: #fafafa; }
         textarea { resize: vertical; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: #00C2FF; background: white; }
-        .btn-submit { width: 100%; padding: 14px; background: linear-gradient(90deg, #00C2FF, #00F5D4); color: #00405c; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 10px; font-size: 1rem; }
+        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(90deg, #00C2FF, #00F5D4); color: #00405c; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 10px; font-size: 1rem; }
         .form-divider { text-align: center; margin: 15px 0; font-size: 0.85rem; color: #999; font-weight: 700; position: relative; }
         .form-divider::before, .form-divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #eee; }
         .form-divider::before { left: 0; }
@@ -188,7 +189,6 @@
         .date-row { display: flex; gap: 10px; }
         .date-col { flex: 1; }
         
-        /* Loading & Media Query */
         #loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); z-index: 500; display: flex; justify-content: center; align-items: center; border-radius: var(--radius); }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--math-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -197,13 +197,26 @@
         .btn-download:hover { background: #333; color: white; }
         .btn-add { background: linear-gradient(135deg, #FF2E63, #FF9F1C); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(255, 46, 99, 0.3); }
 
+        /* FIXED MOBILE LAYOUT - Keep same line */
         @media (max-width: 800px) {
             .controls-bar, .filters-right-group { flex-direction: column; align-items: stretch; }
             .control-group { justify-content: space-between; width: 100%; }
-            .grid-row { grid-template-columns: 1fr; gap: 8px; padding: 15px; border-bottom: 1px solid #eee; }
             .inner-header { display: none; }
             .unit-actions { flex-direction: column; align-items: flex-end; }
-            .unit-header { padding: 12px; }
+            .unit-header { padding: 10px; }
+            
+            /* The magic fix for mobile rows */
+            .grid-row { 
+                /* Date | Name | Status | Actions - Forced into columns */
+                grid-template-columns: 95px 1fr auto auto; 
+                gap: 8px; 
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+            .lesson-name { font-size: 0.9rem; }
+            .lesson-subtopic { font-size: 0.8rem; }
+            .status-badge { font-size: 0.7rem; padding: 2px 6px; }
+            .btn-icon { width: 24px; height: 24px; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -405,7 +418,6 @@
     let currentMonthFilter = 'All';
     let isLogVisible = true;
 
-    // Mapping icons for subject visual cues
     const subjectIcons = {
         'Math': 'fa-calculator',
         'Science': 'fa-flask',
@@ -441,7 +453,6 @@
             });
             document.getElementById('loading-overlay').classList.add('hidden');
             
-            // Set default date to TODAY (Local Time) to prevent timezone bugs
             const today = new Date();
             const localDate = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
             if(document.getElementById('inp-date-start')) document.getElementById('inp-date-start').value = localDate;
@@ -453,7 +464,6 @@
         });
     }
 
-    // --- ADD LESSON ---
     window.addAssignment = async function(e) {
         e.preventDefault();
         const btn = document.querySelector('#entry-modal .btn-submit');
@@ -464,20 +474,14 @@
         const topic = document.getElementById('inp-topic').value;
         const name = document.getElementById('inp-subtopic').value; 
         const note = document.getElementById('inp-note').value;
-        
         const startDate = document.getElementById('inp-date-start').value;
         const endDate = document.getElementById('inp-date-end').value;
-
         const link = document.getElementById('inp-link').value;
         const fileInput = document.getElementById('inp-file');
         const file = fileInput.files[0];
 
         const newEntry = {
-            subject, 
-            topic, // The Folder/Unit Name
-            name,  // The actual lesson name
-            note, // Notes
-            startDate, endDate,
+            subject, topic, name, note, startDate, endDate,
             status: 'Planned',
             fileLink: link || null,
             fileData: null,
@@ -525,22 +529,18 @@
         btn.disabled = false;
     }
 
-    // --- UPDATE STATUS ---
     window.openUpdateModal = function(id) {
         const item = lessons.find(a => a.id === id);
         if (!item) return;
-
         document.getElementById('update-id').value = id;
         document.getElementById('update-status').value = item.status;
-        document.getElementById('update-note').value = item.note || ''; // Load note
+        document.getElementById('update-note').value = item.note || ''; 
         document.getElementById('update-link').value = item.completedFileLink || '';
         document.getElementById('update-file').value = ''; 
         document.getElementById('update-modal').classList.add('active');
     };
 
-    window.closeUpdateModal = function() {
-        document.getElementById('update-modal').classList.remove('active');
-    };
+    window.closeUpdateModal = function() { document.getElementById('update-modal').classList.remove('active'); };
 
     window.saveUpdate = async function(e) {
         e.preventDefault();
@@ -551,24 +551,14 @@
         const fileInput = document.getElementById('update-file');
         const file = fileInput.files[0];
         
-        const updateData = {
-            status: newStatus,
-            note: newNote,
-            completedFileLink: link || null
-        };
-
+        const updateData = { status: newStatus, note: newNote, completedFileLink: link || null };
         const btn = document.querySelector('#update-modal .btn-submit');
         btn.innerText = "Saving...";
         btn.disabled = true;
 
         try {
             if (file) {
-                 if (file.size > MAX_FILE_SIZE) { 
-                     alert("File is too large! Limit 1MB"); 
-                     btn.disabled=false; 
-                     btn.innerText="Save Changes"; 
-                     return; 
-                 }
+                 if (file.size > MAX_FILE_SIZE) { alert("File is too large! Limit 1MB"); btn.disabled=false; btn.innerText="Save Changes"; return; }
                  const reader = new FileReader();
                  reader.onload = async function(evt) {
                      updateData.completedFileData = evt.target.result;
@@ -592,6 +582,7 @@
         }
     };
 
+    // Attach to window explicity for safety
     window.deleteEntry = async function(id) {
         if(confirm('Delete this lesson plan?')) {
             try { await deleteDoc(doc(db, COLLECTION_NAME, id)); } 
@@ -599,7 +590,6 @@
         }
     };
 
-    // --- FILTERING & SORTING ---
     window.filterList = function(subject, btn) {
         currentFilter = subject;
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -622,17 +612,13 @@
         }
     };
 
-    // Modal with PREFILL support
     window.openModal = function(prefill = {}) { 
         const modal = document.getElementById('entry-modal');
-        // Clear previous
         if(Object.keys(prefill).length === 0) {
             document.getElementById('inp-subtopic').value = '';
             document.getElementById('inp-topic').value = '';
             document.getElementById('inp-note').value = '';
-            // Reset select to default if no prefill
         } else {
-            // Apply Prefill
             if(prefill.subject) document.getElementById('inp-subject').value = prefill.subject;
             if(prefill.topic) document.getElementById('inp-topic').value = prefill.topic;
         }
@@ -640,20 +626,14 @@
     };
     
     window.closeModal = function() { document.getElementById('entry-modal').classList.remove('active'); };
+    window.toggleGroup = function(groupId) { document.getElementById(groupId).classList.toggle('expanded'); }
 
-    // Toggle Group Expansion
-    window.toggleGroup = function(groupId) {
-        const groupEl = document.getElementById(groupId);
-        if(groupEl) groupEl.classList.toggle('expanded');
-    }
-
-    // Helper: Format Date
     function formatDateDisplay(dStr) {
         if(!dStr) return "";
         const parts = dStr.split('-'); 
         if(parts.length < 3) return dStr;
         const [y, m, d] = parts;
-        return `${m}/${d}/${y}`; // MM/DD/YYYY
+        return `${m}/${d}/${y}`; 
     }
 
     function updateMonthOptions() {
@@ -687,7 +667,6 @@
         document.getElementById('stat-received').innerText = receivedCount;
 
         let displayList = lessons;
-        
         if (currentFilter !== 'All') displayList = displayList.filter(a => a.subject === currentFilter);
         if (currentMonthFilter !== 'All') displayList = displayList.filter(a => a.startDate && a.startDate.split('-')[1] === currentMonthFilter);
 
@@ -696,60 +675,53 @@
             return;
         }
 
-        // GROUPING LOGIC: Group by TOPIC
         const grouped = {};
         displayList.forEach(item => {
-            // Normalize topic
             const topicKey = (item.topic || 'General').trim();
             if (!grouped[topicKey]) {
-                grouped[topicKey] = {
-                    subject: item.subject,
-                    topic: topicKey,
-                    lessons: []
-                };
+                grouped[topicKey] = { subject: item.subject, topic: topicKey, lessons: [] };
             }
             grouped[topicKey].lessons.push(item);
         });
 
-        // Convert to array and sort (by most recent lesson in the group)
         const groupsArray = Object.values(grouped).sort((a, b) => {
-            // Get max date of A
             const maxDateA = a.lessons.reduce((max, l) => (l.startDate > max ? l.startDate : max), '0000-00-00');
             const maxDateB = b.lessons.reduce((max, l) => (l.startDate > max ? l.startDate : max), '0000-00-00');
-            return maxDateB.localeCompare(maxDateA); // Newest first
+            return maxDateB.localeCompare(maxDateA); 
         });
 
         groupsArray.forEach((group, index) => {
             const groupId = `group-${index}`;
             const color = colors[group.subject] || '#999';
             const iconClass = subjectIcons[group.subject] || 'fa-folder';
-            
-            // Sort lessons inside group: Oldest to Newest
             group.lessons.sort((a,b) => (a.startDate || '').localeCompare(b.startDate || ''));
 
-            // Build Lessons HTML
             let lessonsHtml = '';
             group.lessons.forEach(item => {
-                // FALLBACK for old data: check item.date if startDate is missing
-                const rawDate = item.startDate || item.date;
-                const dateStr = formatDateDisplay(rawDate);
+                const rawStart = item.startDate || item.date;
+                const rawEnd = item.endDate;
+                let dateStr = formatDateDisplay(rawStart);
+                if (rawEnd && rawEnd !== rawStart) {
+                    const endStr = formatDateDisplay(rawEnd);
+                    // UPDATED DATE LOGIC: Uniform Style with alignment indent - Added extra space per user request
+                    dateStr = `<div style="display:flex; flex-direction:column; gap:1px;"><span>&nbsp;&nbsp;&nbsp;${dateStr}</span><span>- ${endStr}</span></div>`;
+                }
                 
                 const isCompleted = item.status === 'Completed';
                 const statusClass = isCompleted ? 'status-received' : 'status-assigned';
                 const statusText = isCompleted ? 'Completed' : 'Planned';
                 
-                // Attachments
                 let assignBtn = '';
-                if (item.fileLink) assignBtn = `<a href="${item.fileLink}" target="_blank" title="Lesson Link" class="file-icon-btn"><i class="fas fa-link"></i></a>`;
-                else if (item.fileData) assignBtn = `<a href="${item.fileData}" download="${item.fileName || 'lesson'}" title="Download" class="file-icon-btn"><i class="fas fa-paperclip"></i></a>`;
+                if (item.fileLink) assignBtn = `<button onclick="window.open('${item.fileLink}')" title="Link" class="btn-icon link-btn"><i class="fas fa-link"></i></button>`;
+                else if (item.fileData) assignBtn = `<a href="${item.fileData}" download="${item.fileName || 'lesson'}" title="Download" class="btn-icon link-btn"><i class="fas fa-paperclip"></i></a>`;
 
                 let completedBtn = '';
-                if (item.completedFileLink) completedBtn = `<a href="${item.completedFileLink}" target="_blank" class="file-icon-btn completed-icon"><i class="fas fa-check-double"></i></a>`;
-                else if (item.completedFileData) completedBtn = `<a href="${item.completedFileData}" download="${item.completedFileName}" class="file-icon-btn completed-icon"><i class="fas fa-file-circle-check"></i></a>`;
+                if (item.completedFileLink) completedBtn = `<button onclick="window.open('${item.completedFileLink}')" class="btn-icon done-btn"><i class="fas fa-check-double"></i></button>`;
+                else if (item.completedFileData) completedBtn = `<a href="${item.completedFileData}" download="${item.completedFileName}" class="btn-icon done-btn"><i class="fas fa-file-circle-check"></i></a>`;
 
                 lessonsHtml += `
                     <div class="grid-row">
-                        <div style="font-weight:700; color:#666; font-size:0.9rem;">${dateStr}</div>
+                        <div style="font-weight:700; color:#666; font-size:0.9rem; line-height:1.2;">${dateStr}</div>
                         <div class="lesson-name-block">
                             <div class="lesson-name">${item.name || 'Lesson'}</div>
                             ${item.subtopic ? `<div class="lesson-subtopic"><i class="fas fa-angle-right" style="font-size:0.7rem;"></i> ${item.subtopic}</div>` : ''}
@@ -758,15 +730,14 @@
                         <div style="text-align:center;">
                             <span class="status-badge ${statusClass}" onclick="window.openUpdateModal('${item.id}')">${statusText}</span>
                         </div>
-                        <div style="text-align:right;">
+                        <div class="action-container">
                             ${assignBtn}${completedBtn}
-                            <i class="fas fa-trash delete-btn" onclick="event.stopPropagation(); window.deleteEntry('${item.id}')" title="Delete Lesson"></i>
+                            <button class="btn-icon delete-btn" onclick="event.stopPropagation(); window.deleteEntry('${item.id}')" title="Delete"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                 `;
             });
 
-            // Unit/Folder HTML
             const groupDiv = document.createElement('div');
             groupDiv.className = 'unit-group';
             groupDiv.id = groupId;
@@ -814,11 +785,14 @@
         const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         doc.text(`Report Generated: ${dateStr}`, 14, 26);
 
-        // Sort by date for PDF regardless of groups
         const sortedForPdf = [...lessons].sort((a,b) => new Date(b.startDate || b.date) - new Date(a.startDate || a.date));
         
         const tableData = sortedForPdf.map(a => {
-            let dStr = formatDateDisplay(a.startDate || a.date);
+            let start = formatDateDisplay(a.startDate || a.date);
+            let end = formatDateDisplay(a.endDate);
+            let dStr = start;
+            if(end && end !== start) dStr += ` - \n${end}`;
+
             let attachText = (a.fileLink || a.fileData) ? "Yes" : "No";
             let completedText = (a.completedFileLink || a.completedFileData) ? "Yes" : "No";
 
