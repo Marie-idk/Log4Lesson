@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabriel's Assignment Log</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: transparent;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --text-main: #222;
+            --text-light: #555;
+            /* Subject Colors */
+            --math-color: #FF2E63;
+            --science-color: #00F5D4;
+            --english-color: #00C2FF;
+            --history-color: #D0FF00;
+            --art-color: #FF9F1C;
+            --music-color: #9D4EDD;   /* New Purple */
+            --pe-color: #2ECC71;      /* New Emerald Green */
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: 0 0 15px rgba(255, 46, 99, 0.5), 0 0 30px rgba(0, 194, 255, 0.3), 0 0 45px rgba(208, 255, 0, 0.2);
+            border: 2px solid rgba(255,255,255,1);
+            position: relative;
+        }
+
+        /* Header */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #eee; }
+        h1 {
+            font-family: 'Fredoka', sans-serif; font-size: 2rem; margin: 0;
+            background: linear-gradient(45deg, #FF2E63, #FF9F1C, #D0FF00, #00C2FF, #9D4EDD);
+            -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block;
+        }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        /* Overview Cards */
+        .status-overview { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .status-card { background: white; padding: 15px; border-radius: var(--radius); box-shadow: 0 5px 15px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 15px; border: 1px solid #f0f0f0; }
+        .status-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+        
+        /* Status Colors */
+        .icon-pending { background: #fff8e1; color: #f39c12; }
+        .icon-received { background: #e8f5e9; color: #00b894; }
+        .icon-overdue { background: #ffebee; color: #e74c3c; animation: pulse-red 2s infinite; }
+
+        .stat-number { font-weight: 800; color: var(--text-main); font-size: 1.2rem; }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        /* Filters */
+        .filter-section { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+        .filter-section::-webkit-scrollbar { display: none; }
+        .filter-btn { background: #fff; border: 2px solid #eee; padding: 8px 18px; border-radius: 25px; font-weight: 700; white-space: nowrap; cursor: pointer; color: var(--text-light); font-size: 0.9rem; }
+        .filter-btn:hover { border-color: #ddd; transform: translateY(-2px); }
+        .filter-btn.active { color: white; border-color: transparent; }
+        .filter-btn[onclick*="'All'"].active { background: #333; }
+        .filter-btn[data-subject="Math"].active { background: var(--math-color); }
+        .filter-btn[data-subject="Science"].active { background: var(--science-color); color: #005f50; }
+        .filter-btn[data-subject="English"].active { background: var(--english-color); color: #00405c; }
+        .filter-btn[data-subject="History"].active { background: var(--history-color); color: #4a5e00; }
+        .filter-btn[data-subject="Art"].active { background: var(--art-color); }
+        .filter-btn[data-subject="Music"].active { background: var(--music-color); }
+        .filter-btn[data-subject="PE/Health"].active { background: var(--pe-color); }
+
+        /* Controls */
+        .controls-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #f8f9fa; padding: 12px 20px; border-radius: 12px; border: 1px solid #eee; flex-wrap: wrap; gap: 15px; }
+        .filters-right-group { display: flex; align-items: center; gap: 20px; }
+        .control-group { display: flex; gap: 10px; align-items: center; }
+        .control-label { margin: 0; font-size: 0.9rem; color: #666; font-weight: 700; white-space: nowrap; }
+        .control-select { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Nunito', sans-serif; font-weight: 600; color: var(--text-main); cursor: pointer; outline: none; background: white; font-size: 0.9rem; min-width: 140px; }
+        .control-btn { background: none; border: none; color: var(--text-light); font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; padding: 5px 10px; border-radius: 6px; }
+        .control-btn:hover { color: #00C2FF; background: #eefbff; }
+
+        /* LOG TABLE */
+        .log-container { background: white; border-radius: var(--radius); box-shadow: 0 5px 15px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #f0f0f0; transition: all 0.3s ease; }
+        .log-container.collapsed .log-body-wrapper { display: none; }
+        
+        .grid-row {
+            display: grid;
+            grid-template-columns: 100px 100px 1fr 130px 140px; /* Actions column wider */
+            padding: 15px;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .log-header {
+            background: #f4f4f4;
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .log-item { background: white; font-size: 0.95rem; }
+        .log-item:last-child { border-bottom: none; }
+        .log-item:hover { background-color: #fafafa; }
+
+        .col-status { text-align: center; }
+        .col-actions { display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            transition: all 0.2s;
+            user-select: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .status-badge:hover { transform: scale(1.05); filter: brightness(0.95); }
+        .status-badge:active { transform: scale(0.95); }
+
+        .status-pending { background: #fff8e1; color: #f39c12; border: 1px solid #ffe0b2; }
+        .status-received { background: #e8f5e9; color: #00b894; border: 1px solid #b9f6ca; }
+        .status-overdue { background: #ffebee; color: #e74c3c; border: 1px solid #ffcdd2; font-weight: 900; }
+
+        .sub-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .file-icon-btn { color: #555; font-size: 1.1rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #f0f0f0; transition: 0.2s; }
+        .file-icon-btn:hover { background: #e0e0e0; color: #00C2FF; }
+        
+        .completed-icon { color: #00b894; background: #e8f5e9; }
+        .completed-icon:hover { background: #b9f6ca; color: #008f72; }
+
+        .delete-btn { color: #ff6b6b; font-size: 1.1rem; cursor: pointer; padding: 5px; opacity: 0.8; transition: 0.2s; margin-left: 5px; }
+        .delete-btn:hover { opacity: 1; transform: scale(1.1); }
+
+        /* Buttons */
+        .btn-download { background: white; border: 2px solid #333; color: #333; padding: 8px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+        .btn-download:hover { background: #333; color: white; }
+        .btn-add { background: linear-gradient(135deg, #FF2E63, #FF9F1C); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(255, 46, 99, 0.3); }
+        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 46, 99, 0.4); }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-card { background: white; width: 90%; max-width: 500px; border-radius: var(--radius); padding: 30px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 20px; right: 20px; border: none; background: none; font-size: 1.5rem; cursor: pointer; color: #999; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.95rem; color: var(--text-main); }
+        input, select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 1rem; background: #fafafa; }
+        input:focus, select:focus { outline: none; border-color: #00C2FF; background: white; }
+        .btn-submit { width: 100%; padding: 14px; background: linear-gradient(90deg, #00C2FF, #00F5D4); color: #00405c; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 10px; font-size: 1rem; }
+        .form-divider { text-align: center; margin: 15px 0; font-size: 0.85rem; color: #999; font-weight: 700; position: relative; }
+        .form-divider::before, .form-divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #eee; }
+        .form-divider::before { left: 0; }
+        .form-divider::after { right: 0; }
+        .sub-label { font-size: 0.8rem; color: #888; font-weight: 600; margin-top: 4px; }
+        .attachment-box { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px dashed #ccc; }
+
+        /* Loading */
+        #loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); z-index: 500; display: flex; justify-content: center; align-items: center; border-radius: var(--radius); }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--math-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+
+        @media (max-width: 700px) {
+            .controls-bar, .filters-right-group { flex-direction: column; align-items: stretch; }
+            .control-group { justify-content: space-between; width: 100%; }
+            .log-header { display: none; }
+            .grid-row { grid-template-columns: 1fr; gap: 8px; padding: 20px; }
+            .col-status { text-align: left; margin-top: 5px; }
+            .col-actions { justify-content: space-between; margin-top: 15px; border-top: 1px solid #f9f9f9; padding-top: 15px; }
+            .status-badge { width: auto; display: inline-block; }
+            .status-overview { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div id="loading-overlay"><div class="spinner"></div></div>
+
+    <header>
+        <div>
+            <h1>Assignment Log</h1>
+            <div style="font-size: 0.95rem; color: #666; font-weight: 600;">Student: Gabriel Mendoza</div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-add" onclick="window.openModal()">
+                <i class="fas fa-plus"></i> New Entry
+            </button>
+            <button class="btn-download" onclick="window.downloadPDF()">
+                <i class="fas fa-file-pdf"></i> PDF
+            </button>
+        </div>
+    </header>
+
+    <div class="status-overview">
+        <div class="status-card">
+            <div class="status-icon icon-pending"><i class="fas fa-clock"></i></div>
+            <div>
+                <div style="font-size: 0.85rem; color: #888; font-weight:700; text-transform:uppercase;">Pending</div>
+                <div class="stat-number" id="stat-pending">0</div>
+            </div>
+        </div>
+        <div class="status-card">
+            <div class="status-icon icon-overdue"><i class="fas fa-exclamation-triangle"></i></div>
+            <div>
+                <div style="font-size: 0.85rem; color: #c0392b; font-weight:700; text-transform:uppercase;">Overdue</div>
+                <div class="stat-number" style="color:#c0392b" id="stat-overdue">0</div>
+            </div>
+        </div>
+        <div class="status-card">
+            <div class="status-icon icon-received"><i class="fas fa-check-circle"></i></div>
+            <div>
+                <div style="font-size: 0.85rem; color: #888; font-weight:700; text-transform:uppercase;">Received</div>
+                <div class="stat-number" id="stat-received">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-section">
+        <button class="filter-btn active" onclick="window.filterList('All', this)">All Subjects</button>
+        <button class="filter-btn" data-subject="Math" onclick="window.filterList('Math', this)">Math</button>
+        <button class="filter-btn" data-subject="Science" onclick="window.filterList('Science', this)">Science</button>
+        <button class="filter-btn" data-subject="English" onclick="window.filterList('English', this)">English</button>
+        <button class="filter-btn" data-subject="History" onclick="window.filterList('History', this)">History</button>
+        <button class="filter-btn" data-subject="Art" onclick="window.filterList('Art', this)">Art</button>
+        <button class="filter-btn" data-subject="Music" onclick="window.filterList('Music', this)">Music</button>
+        <button class="filter-btn" data-subject="PE/Health" onclick="window.filterList('PE/Health', this)">PE/Health</button>
+    </div>
+
+    <div class="controls-bar">
+        <button class="control-btn" onclick="window.toggleLogVisibility()" id="btn-toggle-log">
+            <i class="fas fa-eye-slash"></i> Hide Entries
+        </button>
+        <div class="filters-right-group">
+            <div class="control-group">
+                 <label class="control-label">View Month:</label>
+                 <select id="filter-month" class="control-select" onchange="window.changeMonthFilter(this.value)">
+                     <option value="All">All Months</option>
+                 </select>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Sort:</label>
+                <select class="control-select" onchange="window.changeSort(this.value)">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOG LIST -->
+    <div class="log-container" id="log-container">
+        <!-- HEADER GRID: 5 Columns -->
+        <div class="grid-row log-header">
+            <div>Date</div>
+            <div>Subject</div>
+            <div>Assignment Name</div>
+            <div style="text-align: center;">Status</div>
+            <div style="text-align: right;">Actions</div>
+        </div>
+        
+        <div id="log-body" class="log-body-wrapper"></div>
+    </div>
+
+</div>
+
+<!-- New Entry Modal -->
+<div id="entry-modal" class="modal">
+    <div class="modal-card">
+        <button class="close-modal" onclick="window.closeModal()">&times;</button>
+        <h2 style="margin-top:0; font-family:'Fredoka', sans-serif; color: #333;">New Entry</h2>
+        <form onsubmit="window.addAssignment(event)">
+            <div class="form-group">
+                <label>Subject</label>
+                <select id="inp-subject" required>
+                    <option value="Math">Math</option>
+                    <option value="Science">Science</option>
+                    <option value="English">English</option>
+                    <option value="History">History</option>
+                    <option value="Art">Art</option>
+                    <option value="Music">Music</option>
+                    <option value="PE/Health">PE/Health</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Assignment Name</label>
+                <input type="text" id="inp-name" placeholder="e.g. Fractions Worksheet" required>
+            </div>
+            <div class="form-group">
+                <label>Date Assigned</label>
+                <input type="date" id="inp-date" required>
+            </div>
+            <div class="attachment-box">
+                <label style="color: #444;"><i class="fas fa-paperclip"></i> Attach Assignment</label>
+                <div style="margin-bottom: 10px;">
+                    <label class="sub-label">Paste Link</label>
+                    <input type="url" id="inp-link" placeholder="https://..." style="font-size: 0.9rem;">
+                </div>
+                <div class="form-divider">OR</div>
+                <div>
+                    <label class="sub-label">Upload File (Max 1MB)</label>
+                    <input type="file" id="inp-file" accept="image/*,application/pdf" style="font-size: 0.9rem;">
+                </div>
+            </div>
+            <button type="submit" class="btn-submit">Add to Log</button>
+        </form>
+    </div>
+</div>
+
+<!-- UPDATE STATUS MODAL (New) -->
+<div id="update-modal" class="modal">
+    <div class="modal-card">
+        <button class="close-modal" onclick="window.closeUpdateModal()">&times;</button>
+        <h2 style="margin-top:0; font-family:'Fredoka', sans-serif; color: #333;">Update Status</h2>
+        <form onsubmit="window.saveUpdate(event)">
+            <input type="hidden" id="update-id">
+            
+            <div class="form-group">
+                <label>Current Status</label>
+                <select id="update-status">
+                    <option value="Pending">Pending</option>
+                    <option value="Received">Received</option>
+                    <option value="Overdue">Overdue ⚠️</option>
+                </select>
+            </div>
+            
+            <div class="attachment-box" style="border-color: #00b894; background: #e8f5e9;">
+                <label style="color: #008f72;"><i class="fas fa-check-circle"></i> Attach Completed Work</label>
+                <p style="margin:5px 0 10px; font-size:0.8rem; color:#666;">Upload the finished worksheet here.</p>
+                
+                <div style="margin-bottom: 10px;">
+                    <label class="sub-label">Paste Link</label>
+                    <input type="url" id="update-link" placeholder="https://..." style="font-size: 0.9rem;">
+                </div>
+                <div class="form-divider">OR</div>
+                <div>
+                    <label class="sub-label">Upload File (Max 1MB)</label>
+                    <input type="file" id="update-file" accept="image/*,application/pdf" style="font-size: 0.9rem;">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDcOzjcj4TM9-RowBKNasFa0-IWOTinQ8g",
+      authDomain: "assignment-tracker-dc32b.firebaseapp.com",
+      projectId: "assignment-tracker-dc32b",
+      storageBucket: "assignment-tracker-dc32b.firebasestorage.app",
+      messagingSenderId: "823036120298",
+      appId: "1:823036120298:web:6f557011edca3e9018db93"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    // Explicitly using the GS bucket path provided
+    const storage = getStorage(app, "gs://assignment-tracker-dc32b.firebasestorage.app");
+    const COLLECTION_NAME = "assignments";
+
+    let assignments = [];
+    let currentFilter = 'All';
+    let currentMonthFilter = 'All';
+    let currentSort = 'newest';
+    let isLogVisible = true;
+
+    const colors = {
+        'Math': 'var(--math-color)',
+        'Science': 'var(--science-color)',
+        'English': 'var(--english-color)',
+        'History': 'var(--history-color)',
+        'Art': 'var(--art-color)',
+        'Music': 'var(--music-color)',
+        'PE/Health': 'var(--pe-color)'
+    };
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            subscribeToData();
+        } else {
+            signInAnonymously(auth).catch((error) => {
+                alert("Connection Error. Please check internet.");
+            });
+        }
+    });
+
+    function subscribeToData() {
+        const q = collection(db, COLLECTION_NAME);
+        onSnapshot(q, (snapshot) => {
+            assignments = [];
+            snapshot.forEach((doc) => {
+                assignments.push({ id: doc.id, ...doc.data() });
+            });
+            document.getElementById('loading-overlay').classList.add('hidden');
+            if(document.getElementById('inp-date')) document.getElementById('inp-date').valueAsDate = new Date();
+            updateMonthOptions();
+            renderLog();
+        }, (error) => {
+            console.error("Data Fetch Error:", error);
+        });
+    }
+
+    // --- ADD ASSIGNMENT ---
+    window.addAssignment = async function(e) {
+        e.preventDefault();
+        const btn = document.querySelector('#entry-modal .btn-submit');
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+
+        const subject = document.getElementById('inp-subject').value;
+        const name = document.getElementById('inp-name').value;
+        const date = document.getElementById('inp-date').value;
+        const link = document.getElementById('inp-link').value;
+        const fileInput = document.getElementById('inp-file');
+        const file = fileInput.files[0];
+
+        const newEntry = {
+            subject, name, date,
+            status: 'Pending', // Default to Pending
+            fileLink: link || null,
+            fileName: null,
+            storageUrl: null,
+            fileData: null, // Legacy field
+            createdAt: Date.now()
+        };
+
+        try {
+            if (file) {
+                // Limit: 1MB = 1048576 bytes
+                if (file.size > 1048576) { 
+                    alert("File is too large! limit 1MB"); 
+                    btn.disabled=false; btn.innerText="Add to Log"; 
+                    return; 
+                }
+                
+                // Upload to Firebase Storage
+                const storageRef = ref(storage, 'assignments/' + Date.now() + '_' + file.name);
+                await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(storageRef);
+                
+                newEntry.storageUrl = url;
+                newEntry.fileName = file.name;
+                
+                await addDoc(collection(db, COLLECTION_NAME), newEntry);
+                resetForm();
+            } else {
+                await addDoc(collection(db, COLLECTION_NAME), newEntry);
+                resetForm();
+            }
+        } catch (e) {
+            alert("Error saving: " + e.message + "\nEnsure Firebase Storage is enabled in the console.");
+            console.error(e);
+        } finally {
+            if(!file) {
+                btn.innerText = "Add to Log";
+                btn.disabled = false;
+            }
+        }
+    };
+
+    function resetForm() {
+        window.closeModal();
+        document.getElementById('inp-name').value = ''; 
+        document.getElementById('inp-link').value = '';
+        document.getElementById('inp-file').value = '';
+        const btn = document.querySelector('#entry-modal .btn-submit');
+        btn.innerText = "Add to Log";
+        btn.disabled = false;
+    }
+
+    // --- UPDATE STATUS & COMPLETE WORK ---
+    window.openUpdateModal = function(id) {
+        const item = assignments.find(a => a.id === id);
+        if (!item) return;
+
+        document.getElementById('update-id').value = id;
+        
+        // Handle legacy 'Assigned' mapping to 'Pending' for dropdown
+        let currentStatus = item.status;
+        if (currentStatus === 'Assigned') currentStatus = 'Pending';
+        
+        document.getElementById('update-status').value = currentStatus;
+        
+        // Reset inputs
+        document.getElementById('update-link').value = item.completedFileLink || '';
+        document.getElementById('update-file').value = ''; 
+        
+        document.getElementById('update-modal').classList.add('active');
+    };
+
+    window.closeUpdateModal = function() {
+        document.getElementById('update-modal').classList.remove('active');
+    };
+
+    window.saveUpdate = async function(e) {
+        e.preventDefault();
+        const id = document.getElementById('update-id').value;
+        const newStatus = document.getElementById('update-status').value;
+        const link = document.getElementById('update-link').value;
+        const fileInput = document.getElementById('update-file');
+        const file = fileInput.files[0];
+        
+        const updateData = {
+            status: newStatus,
+            completedFileLink: link || null
+        };
+
+        const btn = document.querySelector('#update-modal .btn-submit');
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+
+        try {
+            if (file) {
+                 // Limit: 1MB = 1048576 bytes
+                 if (file.size > 1048576) { 
+                     alert("File is too large! Limit 1MB"); 
+                     btn.disabled=false; btn.innerText="Save Changes"; 
+                     return; 
+                 }
+                 
+                 // Upload to Firebase Storage
+                 const storageRef = ref(storage, 'completed/' + Date.now() + '_' + file.name);
+                 await uploadBytes(storageRef, file);
+                 const url = await getDownloadURL(storageRef);
+                 
+                 updateData.completedStorageUrl = url;
+                 updateData.completedFileName = file.name;
+                 
+                 await updateDoc(doc(db, COLLECTION_NAME, id), updateData);
+                 window.closeUpdateModal();
+                 btn.innerText = "Save Changes";
+                 btn.disabled = false;
+            } else {
+                await updateDoc(doc(db, COLLECTION_NAME, id), updateData);
+                window.closeUpdateModal();
+                btn.innerText = "Save Changes";
+                btn.disabled = false;
+            }
+        } catch(e) {
+             console.error(e);
+             alert("Error updating: " + e.message + "\nEnsure Firebase Storage is enabled in the console.");
+             btn.innerText = "Save Changes";
+             btn.disabled = false;
+        }
+    };
+
+    window.deleteEntry = async function(id) {
+        if(confirm('Delete this entry?')) {
+            try { await deleteDoc(doc(db, COLLECTION_NAME, id)); } 
+            catch (e) { console.error("Delete failed", e); }
+        }
+    };
+
+    window.filterList = function(subject, btn) {
+        currentFilter = subject;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderLog();
+    };
+
+    window.changeSort = function(val) { currentSort = val; renderLog(); };
+    window.changeMonthFilter = function(val) { currentMonthFilter = val; renderLog(); };
+
+    window.toggleLogVisibility = function() {
+        isLogVisible = !isLogVisible;
+        const container = document.getElementById('log-container');
+        const btn = document.getElementById('btn-toggle-log');
+        if (isLogVisible) {
+            container.classList.remove('collapsed');
+            btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Entries';
+        } else {
+            container.classList.add('collapsed');
+            btn.innerHTML = '<i class="fas fa-eye"></i> Show Entries';
+        }
+    };
+
+    window.openModal = function() { document.getElementById('entry-modal').classList.add('active'); };
+    window.closeModal = function() { document.getElementById('entry-modal').classList.remove('active'); };
+
+    function updateMonthOptions() {
+        const select = document.getElementById('filter-month');
+        const months = new Set();
+        assignments.forEach(a => {
+            if(a.date) {
+                const parts = a.date.split('-');
+                if(parts.length === 3) months.add(parts[1]);
+            }
+        });
+        select.innerHTML = '<option value="All">All Months</option>';
+        Array.from(months).sort().forEach(m => {
+            const d = new Date(2024, parseInt(m)-1, 1);
+            const label = d.toLocaleDateString('en-US', { month: 'long' });
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.innerText = label;
+            select.appendChild(opt);
+        });
+        if(currentMonthFilter !== 'All') select.value = currentMonthFilter;
+    }
+
+    function renderLog() {
+        const container = document.getElementById('log-body');
+        container.innerHTML = '';
+
+        // Handle Legacy "Assigned" as "Pending" for counting
+        const pendingCount = assignments.filter(a => a.status === 'Assigned' || a.status === 'Pending').length;
+        const receivedCount = assignments.filter(a => a.status === 'Received').length;
+        const overdueCount = assignments.filter(a => a.status === 'Overdue').length;
+        
+        document.getElementById('stat-pending').innerText = pendingCount;
+        document.getElementById('stat-received').innerText = receivedCount;
+        document.getElementById('stat-overdue').innerText = overdueCount;
+
+        let displayList = assignments;
+        if (currentFilter !== 'All') displayList = assignments.filter(a => a.subject === currentFilter);
+        if (currentMonthFilter !== 'All') displayList = displayList.filter(a => a.date && a.date.split('-')[1] === currentMonthFilter);
+
+        displayList.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            if (currentSort === 'newest') return dateB - dateA;
+            if (currentSort === 'oldest') return dateA - dateB;
+            return 0;
+        });
+
+        if (displayList.length === 0) {
+            container.innerHTML = '<div style="padding: 30px; text-align: center; color: #999; font-style:italic;">No entries found.</div>';
+            return;
+        }
+
+        displayList.forEach(item => {
+            let dateStr = "";
+            if(item.date) {
+                const [y, m, d] = item.date.split('-');
+                dateStr = `${m}/${d}/${y}`;
+            }
+
+            const color = colors[item.subject] || '#eee';
+            
+            // Map legacy 'Assigned' to 'Pending' for visual display
+            let visualStatus = item.status;
+            if (visualStatus === 'Assigned') visualStatus = 'Pending';
+
+            let statusClass = '';
+            if (visualStatus === 'Received') statusClass = 'status-received';
+            else if (visualStatus === 'Overdue') statusClass = 'status-overdue';
+            else statusClass = 'status-pending';
+
+            // Assignment Attachment (Gray/Blue)
+            let assignBtn = '';
+            if (item.fileLink) {
+                assignBtn = `<a href="${item.fileLink}" target="_blank" title="Assignment Link" class="file-icon-btn"><i class="fas fa-link"></i></a>`;
+            } else if (item.storageUrl) {
+                assignBtn = `<a href="${item.storageUrl}" target="_blank" title="Download Assignment" class="file-icon-btn"><i class="fas fa-paperclip"></i></a>`;
+            } else if (item.fileData) { // Legacy Support
+                assignBtn = `<a href="${item.fileData}" download="${item.fileName || 'assignment'}" title="Download Assignment" class="file-icon-btn"><i class="fas fa-paperclip"></i></a>`;
+            }
+
+            // Completed Work Attachment (Green)
+            let completedBtn = '';
+             if (item.completedFileLink) {
+                completedBtn = `<a href="${item.completedFileLink}" target="_blank" title="View Completed Work" class="file-icon-btn completed-icon"><i class="fas fa-check-double"></i></a>`;
+            } else if (item.completedStorageUrl) {
+                completedBtn = `<a href="${item.completedStorageUrl}" target="_blank" title="Download Completed Work" class="file-icon-btn completed-icon"><i class="fas fa-file-circle-check"></i></a>`;
+            } else if (item.completedFileData) { // Legacy Support
+                completedBtn = `<a href="${item.completedFileData}" download="${item.completedFileName || 'completed_work'}" title="Download Completed Work" class="file-icon-btn completed-icon"><i class="fas fa-file-circle-check"></i></a>`;
+            }
+
+            const div = document.createElement('div');
+            div.className = 'grid-row log-item';
+            div.innerHTML = `
+                <div style="color: #666; font-weight: 700; font-family: 'Fredoka', sans-serif;">${dateStr}</div>
+                <div style="font-weight: 700;">
+                    <span class="sub-dot" style="background-color: ${color}"></span>${item.subject}
+                </div>
+                <div>${item.name}</div>
+                <div class="col-status">
+                    <span class="status-badge ${statusClass}" onclick="window.openUpdateModal('${item.id}')">
+                        ${visualStatus}
+                    </span>
+                </div>
+                <div class="col-actions">
+                    ${assignBtn}
+                    ${completedBtn}
+                    <i class="fas fa-trash delete-btn" onclick="window.deleteEntry('${item.id}')" title="Remove"></i>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    window.downloadPDF = function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        doc.setFont("helvetica", "bold"); doc.setFontSize(18);
+        doc.text("Assignment Log: Gabriel Mendoza", 14, 20);
+        doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        doc.text(`Report Generated: ${dateStr}`, 14, 26);
+
+        const sortedForPdf = [...assignments].sort((a,b) => new Date(b.date) - new Date(a.date));
+        const tableData = sortedForPdf.map(a => {
+            let dStr = ""; if(a.date) { const [y, m, d] = a.date.split('-'); dStr = `${m}/${d}/${y}`; }
+            
+            // Check original attachment
+            let attachText = "No";
+            if (a.fileLink || a.storageUrl || a.fileData) attachText = "Yes";
+
+            // Check completed work
+            let completedText = "No";
+            if (a.completedFileLink || a.completedStorageUrl || a.completedFileData) completedText = "Yes";
+            
+            // Normalize status text for PDF
+            let pdfStatus = a.status;
+            if (pdfStatus === 'Assigned') pdfStatus = 'Pending';
+
+            return [dStr, a.subject, a.name, attachText, completedText, pdfStatus];
+        });
+
+        doc.autoTable({
+            startY: 35,
+            head: [['Date', 'Subject', 'Assignment', 'Orig. File', 'Done File', 'Status']],
+            body: tableData,
+            theme: 'grid',
+            headStyles: { fillColor: [51, 51, 51] },
+            styles: { fontSize: 9 },
+            columnStyles: { 
+                0: { cellWidth: 25 }, 
+                1: { cellWidth: 25 }, 
+                2: { cellWidth: 50 }, 
+                3: { cellWidth: 20 }, 
+                4: { cellWidth: 20 },
+                5: { cellWidth: 25 }
+            }
+        });
+        doc.save(`Gabriel_Assignment_Log.pdf`);
+    };
+</script>
+
+</body>
+</html>
