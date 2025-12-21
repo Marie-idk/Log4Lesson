@@ -15,14 +15,16 @@
             --card-bg: rgba(255, 255, 255, 0.98);
             --text-main: #222;
             --text-light: #555;
-            /* Subject Colors */
-            --math-color: #FF2E63;
-            --science-color: #00F5D4;
-            --english-color: #00C2FF;
-            --history-color: #D0FF00;
-            --art-color: #FF9F1C;
-            --music-color: #9D4EDD;   /* New Purple */
-            --pe-color: #2ECC71;      /* New Emerald Green */
+            
+            /* Subject Colors - UPDATED FOR CONTRAST */
+            --math-color: #FF2E63;      /* Pink/Red */
+            --science-color: #00F5D4;   /* Teal/Mint */
+            --english-color: #2980b9;   /* Deep Blue */
+            --history-color: #f1c40f;   /* Gold/Amber */
+            --art-color: #e67e22;       /* Orange */
+            --music-color: #9D4EDD;     /* Purple */
+            --pe-color: #2ECC71;        /* Green */
+            
             --radius: 16px;
         }
 
@@ -85,8 +87,8 @@
         .filter-btn[onclick*="'All'"].active { background: #333; }
         .filter-btn[data-subject="Math"].active { background: var(--math-color); }
         .filter-btn[data-subject="Science"].active { background: var(--science-color); color: #005f50; }
-        .filter-btn[data-subject="English"].active { background: var(--english-color); color: #00405c; }
-        .filter-btn[data-subject="History"].active { background: var(--history-color); color: #4a5e00; }
+        .filter-btn[data-subject="English"].active { background: var(--english-color); }
+        .filter-btn[data-subject="History"].active { background: var(--history-color); }
         .filter-btn[data-subject="Art"].active { background: var(--art-color); }
         .filter-btn[data-subject="Music"].active { background: var(--music-color); }
         .filter-btn[data-subject="PE/Health"].active { background: var(--pe-color); }
@@ -106,7 +108,7 @@
         
         .grid-row {
             display: grid;
-            grid-template-columns: 100px 100px 1fr 130px 140px; /* Actions column wider */
+            grid-template-columns: 100px 100px 1fr 130px 100px; 
             padding: 15px;
             align-items: center;
             border-bottom: 1px solid #eee;
@@ -127,7 +129,7 @@
         .log-item:hover { background-color: #fafafa; }
 
         .col-status { text-align: center; }
-        .col-actions { display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+        .col-actions { display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
 
         .status-badge {
             display: inline-block;
@@ -151,15 +153,22 @@
 
         .sub-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         
-        .file-icon-btn { color: #555; font-size: 1.1rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #f0f0f0; transition: 0.2s; }
-        .file-icon-btn:hover { background: #e0e0e0; color: #00C2FF; }
-        
-        .completed-icon { color: #00b894; background: #e8f5e9; }
-        .completed-icon:hover { background: #b9f6ca; color: #008f72; }
-
-        .delete-btn { color: #ff6b6b; font-size: 1.1rem; cursor: pointer; padding: 5px; opacity: 0.8; transition: 0.2s; margin-left: 5px; }
+        /* Interactive Elements */
+        .delete-btn { color: #ff6b6b; font-size: 1.1rem; cursor: pointer; padding: 5px; opacity: 0.8; transition: 0.2s; }
         .delete-btn:hover { opacity: 1; transform: scale(1.1); }
+        
+        .edit-btn { color: #555; font-size: 1.1rem; cursor: pointer; padding: 5px; opacity: 0.8; transition: 0.2s; }
+        .edit-btn:hover { opacity: 1; transform: scale(1.1); color: #00C2FF; }
 
+        .assignment-link {
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .assignment-link:hover { text-decoration: underline; filter: brightness(0.9); }
+        
         /* Buttons */
         .btn-download { background: white; border: 2px solid #333; color: #333; padding: 8px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
         .btn-download:hover { background: #333; color: white; }
@@ -336,7 +345,7 @@
     </div>
 </div>
 
-<!-- UPDATE STATUS MODAL (New) -->
+<!-- UPDATE STATUS MODAL -->
 <div id="update-modal" class="modal">
     <div class="modal-card">
         <button class="close-modal" onclick="window.closeUpdateModal()">&times;</button>
@@ -353,9 +362,15 @@
                 </select>
             </div>
             
+            <!-- Download Completed Work Section (Visible if file exists) -->
+            <div id="existing-work-container" style="display:none; background:#e0f7fa; padding:10px; border-radius:8px; margin-bottom:15px; border:1px solid #b2ebf2;">
+                <label style="color: #006064; margin-bottom:5px;">Attached Work:</label>
+                <a id="existing-work-link" href="#" target="_blank" style="color:#0097a7; font-weight:700; text-decoration:none;">View Completed File</a>
+            </div>
+
             <div class="attachment-box" style="border-color: #00b894; background: #e8f5e9;">
                 <label style="color: #008f72;"><i class="fas fa-check-circle"></i> Attach Completed Work</label>
-                <p style="margin:5px 0 10px; font-size:0.8rem; color:#666;">Upload the finished worksheet here.</p>
+                <p style="margin:5px 0 10px; font-size:0.8rem; color:#666;">Uploading automatically marks as "Received".</p>
                 
                 <div style="margin-bottom: 10px;">
                     <label class="sub-label">Paste Link</label>
@@ -369,6 +384,38 @@
             </div>
             
             <button type="submit" class="btn-submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<!-- EDIT ENTRY MODAL (NEW) -->
+<div id="edit-modal" class="modal">
+    <div class="modal-card">
+        <button class="close-modal" onclick="window.closeEditModal()">&times;</button>
+        <h2 style="margin-top:0; font-family:'Fredoka', sans-serif; color: #333;">Edit Entry</h2>
+        <form onsubmit="window.saveEdit(event)">
+            <input type="hidden" id="edit-id">
+            <div class="form-group">
+                <label>Subject</label>
+                <select id="edit-subject" required>
+                    <option value="Math">Math</option>
+                    <option value="Science">Science</option>
+                    <option value="English">English</option>
+                    <option value="History">History</option>
+                    <option value="Art">Art</option>
+                    <option value="Music">Music</option>
+                    <option value="PE/Health">PE/Health</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Assignment Name</label>
+                <input type="text" id="edit-name" required>
+            </div>
+            <div class="form-group">
+                <label>Date Assigned</label>
+                <input type="date" id="edit-date" required>
+            </div>
+            <button type="submit" class="btn-submit">Update Entry</button>
         </form>
     </div>
 </div>
@@ -416,7 +463,9 @@
             subscribeToData();
         } else {
             signInAnonymously(auth).catch((error) => {
-                alert("Connection Error. Please check internet.");
+                document.getElementById('loading-overlay').classList.add('hidden');
+                console.error("Auth Error:", error);
+                alert("Auth Error: Enable Anonymous Auth in Firebase Console.");
             });
         }
     });
@@ -433,7 +482,9 @@
             updateMonthOptions();
             renderLog();
         }, (error) => {
+            document.getElementById('loading-overlay').classList.add('hidden');
             console.error("Data Fetch Error:", error);
+            alert("Database Access Error. Check Firestore Rules in Console.");
         });
     }
 
@@ -451,33 +502,34 @@
         const fileInput = document.getElementById('inp-file');
         const file = fileInput.files[0];
 
+        // LOGIC FIX: Auto-set status to 'Received' if any attachment is provided
+        let initialStatus = 'Pending';
+        if (link || file) {
+            initialStatus = 'Received';
+        }
+
         const newEntry = {
             subject, name, date,
-            status: 'Pending', // Default to Pending
+            status: initialStatus, 
             fileLink: link || null,
             fileName: null,
             storageUrl: null,
-            fileData: null, // Legacy field
+            fileData: null, 
             createdAt: Date.now()
         };
 
         try {
             if (file) {
-                // Limit: 1MB = 1048576 bytes
                 if (file.size > 1048576) { 
                     alert("File is too large! limit 1MB"); 
                     btn.disabled=false; btn.innerText="Add to Log"; 
                     return; 
                 }
-                
-                // Upload to Firebase Storage
                 const storageRef = ref(storage, 'assignments/' + Date.now() + '_' + file.name);
                 await uploadBytes(storageRef, file);
                 const url = await getDownloadURL(storageRef);
-                
                 newEntry.storageUrl = url;
                 newEntry.fileName = file.name;
-                
                 await addDoc(collection(db, COLLECTION_NAME), newEntry);
                 resetForm();
             } else {
@@ -485,7 +537,7 @@
                 resetForm();
             }
         } catch (e) {
-            alert("Error saving: " + e.message + "\nEnsure Firebase Storage is enabled in the console.");
+            alert("Error saving: " + e.message);
             console.error(e);
         } finally {
             if(!file) {
@@ -505,6 +557,39 @@
         btn.disabled = false;
     }
 
+    // --- EDIT ASSIGNMENT (NEW) ---
+    window.openEditModal = function(id) {
+        const item = assignments.find(a => a.id === id);
+        if(!item) return;
+        
+        document.getElementById('edit-id').value = id;
+        document.getElementById('edit-subject').value = item.subject;
+        document.getElementById('edit-name').value = item.name;
+        document.getElementById('edit-date').value = item.date;
+        document.getElementById('edit-modal').classList.add('active');
+    };
+
+    window.closeEditModal = function() {
+        document.getElementById('edit-modal').classList.remove('active');
+    };
+
+    window.saveEdit = async function(e) {
+        e.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const updates = {
+            subject: document.getElementById('edit-subject').value,
+            name: document.getElementById('edit-name').value,
+            date: document.getElementById('edit-date').value
+        };
+        
+        try {
+            await updateDoc(doc(db, COLLECTION_NAME, id), updates);
+            window.closeEditModal();
+        } catch(e) {
+            alert("Error updating entry: " + e.message);
+        }
+    };
+
     // --- UPDATE STATUS & COMPLETE WORK ---
     window.openUpdateModal = function(id) {
         const item = assignments.find(a => a.id === id);
@@ -512,14 +597,26 @@
 
         document.getElementById('update-id').value = id;
         
-        // Handle legacy 'Assigned' mapping to 'Pending' for dropdown
+        // Map legacy status
         let currentStatus = item.status;
         if (currentStatus === 'Assigned') currentStatus = 'Pending';
         
         document.getElementById('update-status').value = currentStatus;
         
+        // Show link to existing work if present
+        const workContainer = document.getElementById('existing-work-container');
+        const workLink = document.getElementById('existing-work-link');
+        
+        const existingUrl = item.completedFileLink || item.completedStorageUrl || item.completedFileData;
+        if (existingUrl) {
+            workContainer.style.display = 'block';
+            workLink.href = existingUrl;
+        } else {
+            workContainer.style.display = 'none';
+        }
+
         // Reset inputs
-        document.getElementById('update-link').value = item.completedFileLink || '';
+        document.getElementById('update-link').value = '';
         document.getElementById('update-file').value = ''; 
         
         document.getElementById('update-modal').classList.add('active');
@@ -532,15 +629,21 @@
     window.saveUpdate = async function(e) {
         e.preventDefault();
         const id = document.getElementById('update-id').value;
-        const newStatus = document.getElementById('update-status').value;
         const link = document.getElementById('update-link').value;
         const fileInput = document.getElementById('update-file');
         const file = fileInput.files[0];
         
+        let newStatus = document.getElementById('update-status').value;
+        
+        // Auto-set status to Received if attachment is present
+        if (link || file) {
+            newStatus = 'Received';
+        }
+
         const updateData = {
-            status: newStatus,
-            completedFileLink: link || null
+            status: newStatus
         };
+        if(link) updateData.completedFileLink = link;
 
         const btn = document.querySelector('#update-modal .btn-submit');
         btn.innerText = "Saving...";
@@ -548,14 +651,11 @@
 
         try {
             if (file) {
-                 // Limit: 1MB = 1048576 bytes
                  if (file.size > 1048576) { 
                      alert("File is too large! Limit 1MB"); 
                      btn.disabled=false; btn.innerText="Save Changes"; 
                      return; 
                  }
-                 
-                 // Upload to Firebase Storage
                  const storageRef = ref(storage, 'completed/' + Date.now() + '_' + file.name);
                  await uploadBytes(storageRef, file);
                  const url = await getDownloadURL(storageRef);
@@ -575,7 +675,7 @@
             }
         } catch(e) {
              console.error(e);
-             alert("Error updating: " + e.message + "\nEnsure Firebase Storage is enabled in the console.");
+             alert("Error updating: " + e.message);
              btn.innerText = "Save Changes";
              btn.disabled = false;
         }
@@ -639,10 +739,33 @@
         const container = document.getElementById('log-body');
         container.innerHTML = '';
 
-        // Handle Legacy "Assigned" as "Pending" for counting
-        const pendingCount = assignments.filter(a => a.status === 'Assigned' || a.status === 'Pending').length;
-        const receivedCount = assignments.filter(a => a.status === 'Received').length;
-        const overdueCount = assignments.filter(a => a.status === 'Overdue').length;
+        // Auto-Overdue Logic (Visual only)
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        let pendingCount = 0;
+        let receivedCount = 0;
+        let overdueCount = 0;
+
+        assignments.forEach(a => {
+            // Determine if overdue
+            const dueDate = new Date(a.date);
+            // Fix timezone offset issue roughly by using noon
+            dueDate.setHours(12,0,0,0); 
+            
+            // Map legacy 'Assigned' to 'Pending'
+            let status = a.status;
+            if(status === 'Assigned') status = 'Pending';
+
+            let isOverdue = false;
+            if (status !== 'Received' && dueDate < today) {
+                isOverdue = true;
+            }
+
+            if(status === 'Received') receivedCount++;
+            else if(isOverdue) overdueCount++;
+            else pendingCount++;
+        });
         
         document.getElementById('stat-pending').innerText = pendingCount;
         document.getElementById('stat-received').innerText = receivedCount;
@@ -672,35 +795,34 @@
                 dateStr = `${m}/${d}/${y}`;
             }
 
-            const color = colors[item.subject] || '#eee';
+            // COLOR LOOKUP: Trim subject to handle whitespace errors
+            const subjectKey = item.subject ? item.subject.trim() : '';
+            const color = colors[subjectKey] || '#eee';
             
-            // Map legacy 'Assigned' to 'Pending' for visual display
+            // Determine Status
             let visualStatus = item.status;
             if (visualStatus === 'Assigned') visualStatus = 'Pending';
 
+            // Check overdue for individual item display
+            const dueDate = new Date(item.date);
+            dueDate.setHours(12,0,0,0);
+            
             let statusClass = '';
             if (visualStatus === 'Received') statusClass = 'status-received';
-            else if (visualStatus === 'Overdue') statusClass = 'status-overdue';
+            else if (dueDate < today) {
+                visualStatus = 'Overdue';
+                statusClass = 'status-overdue';
+            }
             else statusClass = 'status-pending';
 
-            // Assignment Attachment (Gray/Blue)
-            let assignBtn = '';
-            if (item.fileLink) {
-                assignBtn = `<a href="${item.fileLink}" target="_blank" title="Assignment Link" class="file-icon-btn"><i class="fas fa-link"></i></a>`;
-            } else if (item.storageUrl) {
-                assignBtn = `<a href="${item.storageUrl}" target="_blank" title="Download Assignment" class="file-icon-btn"><i class="fas fa-paperclip"></i></a>`;
-            } else if (item.fileData) { // Legacy Support
-                assignBtn = `<a href="${item.fileData}" download="${item.fileName || 'assignment'}" title="Download Assignment" class="file-icon-btn"><i class="fas fa-paperclip"></i></a>`;
-            }
-
-            // Completed Work Attachment (Green)
-            let completedBtn = '';
-             if (item.completedFileLink) {
-                completedBtn = `<a href="${item.completedFileLink}" target="_blank" title="View Completed Work" class="file-icon-btn completed-icon"><i class="fas fa-check-double"></i></a>`;
-            } else if (item.completedStorageUrl) {
-                completedBtn = `<a href="${item.completedStorageUrl}" target="_blank" title="Download Completed Work" class="file-icon-btn completed-icon"><i class="fas fa-file-circle-check"></i></a>`;
-            } else if (item.completedFileData) { // Legacy Support
-                completedBtn = `<a href="${item.completedFileData}" download="${item.completedFileName || 'completed_work'}" title="Download Completed Work" class="file-icon-btn completed-icon"><i class="fas fa-file-circle-check"></i></a>`;
+            // File Link Logic
+            let fileUrl = item.fileLink || item.storageUrl || item.fileData;
+            let nameContent = item.name;
+            // Use the subject color calculated earlier
+            if (fileUrl) {
+                nameContent = `<a href="${fileUrl}" target="_blank" class="assignment-link" style="color: ${color}"><i class="fas fa-paperclip"></i> ${item.name}</a>`;
+            } else {
+                nameContent = `<span class="assignment-text" style="color: ${color}; font-weight: 700;">${item.name}</span>`;
             }
 
             const div = document.createElement('div');
@@ -710,15 +832,14 @@
                 <div style="font-weight: 700;">
                     <span class="sub-dot" style="background-color: ${color}"></span>${item.subject}
                 </div>
-                <div>${item.name}</div>
+                <div>${nameContent}</div>
                 <div class="col-status">
                     <span class="status-badge ${statusClass}" onclick="window.openUpdateModal('${item.id}')">
                         ${visualStatus}
                     </span>
                 </div>
                 <div class="col-actions">
-                    ${assignBtn}
-                    ${completedBtn}
+                    <i class="fas fa-edit edit-btn" onclick="window.openEditModal('${item.id}')" title="Edit Entry"></i>
                     <i class="fas fa-trash delete-btn" onclick="window.deleteEntry('${item.id}')" title="Remove"></i>
                 </div>
             `;
@@ -740,17 +861,23 @@
         const tableData = sortedForPdf.map(a => {
             let dStr = ""; if(a.date) { const [y, m, d] = a.date.split('-'); dStr = `${m}/${d}/${y}`; }
             
-            // Check original attachment
             let attachText = "No";
             if (a.fileLink || a.storageUrl || a.fileData) attachText = "Yes";
 
-            // Check completed work
             let completedText = "No";
             if (a.completedFileLink || a.completedStorageUrl || a.completedFileData) completedText = "Yes";
             
-            // Normalize status text for PDF
             let pdfStatus = a.status;
             if (pdfStatus === 'Assigned') pdfStatus = 'Pending';
+            
+            // Check overdue logic for PDF
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const dueDate = new Date(a.date);
+            dueDate.setHours(12,0,0,0);
+            if(pdfStatus !== 'Received' && dueDate < today) {
+                pdfStatus = 'Overdue';
+            }
 
             return [dStr, a.subject, a.name, attachText, completedText, pdfStatus];
         });
@@ -761,11 +888,12 @@
             body: tableData,
             theme: 'grid',
             headStyles: { fillColor: [51, 51, 51] },
-            styles: { fontSize: 9 },
+            styles: { fontSize: 9, cellPadding: 2 }, // Reduced padding slightly to help fit
+            margin: { left: 10, right: 10 }, // Explicit margins
             columnStyles: { 
                 0: { cellWidth: 25 }, 
                 1: { cellWidth: 25 }, 
-                2: { cellWidth: 50 }, 
+                2: { cellWidth: 'auto' }, // Allow this to fill remaining space
                 3: { cellWidth: 20 }, 
                 4: { cellWidth: 20 },
                 5: { cellWidth: 25 }
